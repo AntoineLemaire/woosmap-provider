@@ -102,6 +102,10 @@ final class Woosmap extends AbstractHttpProvider implements Provider
             $url .= sprintf('&cc_format=%s', $ccFormat);
         }
 
+        if (null !== $limit = $query->getLimit()) {
+            $url .= sprintf('&limit=%d', $limit);
+        }
+
         return $this->fetchUrl($url, $query->getLocale(), $query->getLimit());
     }
 
@@ -173,19 +177,9 @@ final class Woosmap extends AbstractHttpProvider implements Provider
             if (isset($result->formatted_address)) {
                 $address = $address->withFormattedAddress($result->formatted_address);
             }
-            $address = $address->withStreetAddress($builder->getValue('street_address'));
-            $address = $address->withIntersection($builder->getValue('intersection'));
+            $address = $address->withCounty($builder->getValue('county'));
             $address = $address->withPolitical($builder->getValue('political'));
-            $address = $address->withColloquialArea($builder->getValue('colloquial_area'));
-            $address = $address->withWard($builder->getValue('ward'));
-            $address = $address->withNeighborhood($builder->getValue('neighborhood'));
-            $address = $address->withPremise($builder->getValue('premise'));
-            $address = $address->withSubpremise($builder->getValue('subpremise'));
-            $address = $address->withNaturalFeature($builder->getValue('natural_feature'));
-            $address = $address->withAirport($builder->getValue('airport'));
-            $address = $address->withPark($builder->getValue('park'));
-            $address = $address->withPointOfInterest($builder->getValue('point_of_interest'));
-            $address = $address->withEstablishment($builder->getValue('establishment'));
+            $address = $address->withState($builder->getValue('state'));
             $address = $address->withSubLocalityLevels($builder->getValue('subLocalityLevel', []));
             $results[] = $address;
 
@@ -218,30 +212,6 @@ final class Woosmap extends AbstractHttpProvider implements Provider
 
                 break;
 
-            case 'administrative_area_level_1':
-            case 'administrative_area_level_2':
-            case 'administrative_area_level_3':
-            case 'administrative_area_level_4':
-            case 'administrative_area_level_5':
-                $builder->addAdminLevel(intval(substr($type, -1)), $values->long_name, $values->short_name);
-
-                break;
-
-            case 'sublocality_level_1':
-            case 'sublocality_level_2':
-            case 'sublocality_level_3':
-            case 'sublocality_level_4':
-            case 'sublocality_level_5':
-                $subLocalityLevel = $builder->getValue('subLocalityLevel', []);
-                $subLocalityLevel[] = [
-                    'level' => intval(substr($type, -1)),
-                    'name' => $values->long_name,
-                    'code' => $values->short_name,
-                ];
-                $builder->setValue('subLocalityLevel', $subLocalityLevel);
-
-                break;
-
             case 'country':
                 $builder->setCountry($values->long_name);
                 $builder->setCountryCode($values->short_name);
@@ -263,19 +233,9 @@ final class Woosmap extends AbstractHttpProvider implements Provider
 
                 break;
 
-            case 'street_address':
-            case 'intersection':
+            case 'county':
             case 'political':
-            case 'colloquial_area':
-            case 'ward':
-            case 'neighborhood':
-            case 'premise':
-            case 'subpremise':
-            case 'natural_feature':
-            case 'airport':
-            case 'park':
-            case 'point_of_interest':
-            case 'establishment':
+            case 'state':
                 $builder->setValue($type, $values->long_name);
 
                 break;
@@ -309,7 +269,7 @@ final class Woosmap extends AbstractHttpProvider implements Provider
      * @throws InvalidCredentials
      * @throws InvalidServerResponse
      */
-    private function validateResponse(string $url, $content)
+    private function validateResponse(string $url, string $content)
     {
         $json = json_decode($content);
 

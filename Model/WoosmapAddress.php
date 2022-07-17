@@ -41,12 +41,7 @@ final class WoosmapAddress extends Address
     /**
      * @var string|null
      */
-    private $streetAddress;
-
-    /**
-     * @var string|null
-     */
-    private $intersection;
+    private $county;
 
     /**
      * @var string|null
@@ -56,52 +51,7 @@ final class WoosmapAddress extends Address
     /**
      * @var string|null
      */
-    private $colloquialArea;
-
-    /**
-     * @var string|null
-     */
-    private $ward;
-
-    /**
-     * @var string|null
-     */
-    private $neighborhood;
-
-    /**
-     * @var string|null
-     */
-    private $premise;
-
-    /**
-     * @var string|null
-     */
-    private $subpremise;
-
-    /**
-     * @var string|null
-     */
-    private $naturalFeature;
-
-    /**
-     * @var string|null
-     */
-    private $airport;
-
-    /**
-     * @var string|null
-     */
-    private $park;
-
-    /**
-     * @var string|null
-     */
-    private $pointOfInterest;
-
-    /**
-     * @var string|null
-     */
-    private $establishment;
+    private $state;
 
     /**
      * @var AdminLevelCollection
@@ -195,20 +145,20 @@ final class WoosmapAddress extends Address
     /**
      * @return null|string
      */
-    public function getAirport()
+    public function getCounty()
     {
-        return $this->airport;
+        return $this->county;
     }
 
     /**
-     * @param string|null $airport
+     * @param string|null $county
      *
      * @return WoosmapAddress
      */
-    public function withAirport(string $airport = null)
+    public function withCounty(string $county = null)
     {
         $new = clone $this;
-        $new->airport = $airport;
+        $new->county = $county;
 
         return $new;
     }
@@ -216,125 +166,20 @@ final class WoosmapAddress extends Address
     /**
      * @return null|string
      */
-    public function getColloquialArea()
+    public function getState()
     {
-        return $this->colloquialArea;
+        return $this->state;
     }
 
     /**
-     * @param string|null $colloquialArea
+     * @param string|null $state
      *
      * @return WoosmapAddress
      */
-    public function withColloquialArea(string $colloquialArea = null)
+    public function withState(string $state = null)
     {
         $new = clone $this;
-        $new->colloquialArea = $colloquialArea;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getIntersection()
-    {
-        return $this->intersection;
-    }
-
-    /**
-     * @param string|null $intersection
-     *
-     * @return WoosmapAddress
-     */
-    public function withIntersection(string $intersection = null)
-    {
-        $new = clone $this;
-        $new->intersection = $intersection;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getNaturalFeature()
-    {
-        return $this->naturalFeature;
-    }
-
-    /**
-     * @param string|null $naturalFeature
-     *
-     * @return WoosmapAddress
-     */
-    public function withNaturalFeature(string $naturalFeature = null)
-    {
-        $new = clone $this;
-        $new->naturalFeature = $naturalFeature;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getNeighborhood()
-    {
-        return $this->neighborhood;
-    }
-
-    /**
-     * @param string|null $neighborhood
-     *
-     * @return WoosmapAddress
-     */
-    public function withNeighborhood(string $neighborhood = null)
-    {
-        $new = clone $this;
-        $new->neighborhood = $neighborhood;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getPark()
-    {
-        return $this->park;
-    }
-
-    /**
-     * @param string|null $park
-     *
-     * @return WoosmapAddress
-     */
-    public function withPark(string $park = null)
-    {
-        $new = clone $this;
-        $new->park = $park;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getPointOfInterest()
-    {
-        return $this->pointOfInterest;
-    }
-
-    /**
-     * @param string|null $pointOfInterest
-     *
-     * @return WoosmapAddress
-     */
-    public function withPointOfInterest(string $pointOfInterest = null)
-    {
-        $new = clone $this;
-        $new->pointOfInterest = $pointOfInterest;
+        $new->state = $state;
 
         return $new;
     }
@@ -356,111 +201,6 @@ final class WoosmapAddress extends Address
     {
         $new = clone $this;
         $new->political = $political;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getPremise()
-    {
-        return $this->premise;
-    }
-
-    /**
-     * @param string $premise
-     *
-     * @return WoosmapAddress
-     */
-    public function withPremise(string $premise = null)
-    {
-        $new = clone $this;
-        $new->premise = $premise;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getStreetAddress()
-    {
-        return $this->streetAddress;
-    }
-
-    /**
-     * @param string|null $streetAddress
-     *
-     * @return WoosmapAddress
-     */
-    public function withStreetAddress(string $streetAddress = null)
-    {
-        $new = clone $this;
-        $new->streetAddress = $streetAddress;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getSubpremise()
-    {
-        return $this->subpremise;
-    }
-
-    /**
-     * @param string|null $subpremise
-     *
-     * @return WoosmapAddress
-     */
-    public function withSubpremise(string $subpremise = null)
-    {
-        $new = clone $this;
-        $new->subpremise = $subpremise;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getWard()
-    {
-        return $this->ward;
-    }
-
-    /**
-     * @param string|null $ward
-     *
-     * @return WoosmapAddress
-     */
-    public function withWard(string $ward = null)
-    {
-        $new = clone $this;
-        $new->ward = $ward;
-
-        return $new;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getEstablishment()
-    {
-        return $this->establishment;
-    }
-
-    /**
-     * @param string|null $establishment
-     *
-     * @return WoosmapAddress
-     */
-    public function withEstablishment(string $establishment = null)
-    {
-        $new = clone $this;
-        $new->establishment = $establishment;
 
         return $new;
     }
