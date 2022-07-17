@@ -50,16 +50,23 @@ final class Woosmap extends AbstractHttpProvider implements Provider
     private $privateKey;
 
     /**
+     * @var string|null
+     */
+    private $ccFormat;
+
+    /**
      * @param HttpClient  $client An HTTP adapter
      * @param string|null $publicKey Your Public API key (optional)
      * @param string|null $privateKey Your Private API Key (optional)
+     * @param string|null $ccFormat country code format (null|"alpha2"|"alpha3")
      */
-    public function __construct(HttpClient $client, string $publicKey = null, string $privateKey = null)
+    public function __construct(HttpClient $client, string $publicKey = null, string $privateKey = null, string $ccFormat = null)
     {
         parent::__construct($client);
 
         $this->publicKey = $publicKey;
         $this->privateKey = $privateKey;
+        $this->ccFormat = $ccFormat;
     }
 
     public function geocodeQuery(GeocodeQuery $query): Collection
@@ -98,7 +105,7 @@ final class Woosmap extends AbstractHttpProvider implements Provider
             $url .= sprintf('&components=%s', urlencode($serializedComponents));
         }
 
-        if (null !== $ccFormat = $query->getData('cc_format')) {
+        if (null !== $ccFormat = $query->getData('cc_format', $this->ccFormat)) {
             $url .= sprintf('&cc_format=%s', $ccFormat);
         }
 
