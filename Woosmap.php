@@ -25,7 +25,7 @@ use Geocoder\Query\ReverseQuery;
 use Geocoder\Http\Provider\AbstractHttpProvider;
 use Geocoder\Provider\Woosmap\Model\WoosmapAddress;
 use Geocoder\Provider\Provider;
-use Http\Client\HttpClient;
+use Psr\Http\Client\ClientInterface;
 
 final class Woosmap extends AbstractHttpProvider implements Provider
 {
@@ -55,12 +55,12 @@ final class Woosmap extends AbstractHttpProvider implements Provider
     private $ccFormat;
 
     /**
-     * @param HttpClient  $client An HTTP adapter
-     * @param string|null $publicKey Your Public API key (optional)
-     * @param string|null $privateKey Your Private API Key (optional)
-     * @param string|null $ccFormat country code format (null|"alpha2"|"alpha3")
+     * @param ClientInterface $client An HTTP adapter
+     * @param string|null     $publicKey Your Public API key (optional)
+     * @param string|null     $privateKey Your Private API Key (optional)
+     * @param string|null     $ccFormat country code format (null|"alpha2"|"alpha3")
      */
-    public function __construct(HttpClient $client, string $publicKey = null, string $privateKey = null, string $ccFormat = null)
+    public function __construct(ClientInterface $client, string $publicKey = null, string $privateKey = null, string $ccFormat = null)
     {
         parent::__construct($client);
 
