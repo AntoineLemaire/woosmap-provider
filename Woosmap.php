@@ -214,6 +214,7 @@ final class Woosmap extends AbstractHttpProvider implements Provider
     {
         switch ($type) {
             case 'postal_code':
+            case 'postal_codes':
                 $builder->setPostalCode($values->long_name);
 
                 break;
