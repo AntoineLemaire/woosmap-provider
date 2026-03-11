@@ -32,12 +32,12 @@ final class Woosmap extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL_SSL = 'https://api.woosmap.com/address/geocode/json?address=%s';
+    const GEOCODE_ENDPOINT_URL_SSL = 'https://api.woosmap.com/localities/geocode?address=%s';
 
     /**
      * @var string
      */
-    const REVERSE_ENDPOINT_URL_SSL = 'https://api.woosmap.com/address/geocode/json?latlng=%F,%F';
+    const REVERSE_ENDPOINT_URL_SSL = 'https://api.woosmap.com/localities/geocode?latlng=%F,%F';
 
     /**
      * @var string|null
@@ -154,7 +154,7 @@ final class Woosmap extends AbstractHttpProvider implements Provider
         $json = $this->validateResponse($url, $content);
 
         // no result
-        if (!isset($json->results) || !count($json->results) || 'OK' !== $json->status) {
+        if (!isset($json->results) || !count($json->results)) {
             return new AddressCollection([]);
         }
 
@@ -164,6 +164,11 @@ final class Woosmap extends AbstractHttpProvider implements Provider
 
             $coordinates = $result->geometry->location;
             $builder->setCoordinates($coordinates->lat, $coordinates->lng);
+
+            // set official Woosmap Locality id
+            if (isset($result->public_id)) {
+                $builder->setValue('id', $result->public_id);
+            }
 
             // update address components
             foreach ($result->address_components as $component) {
@@ -285,14 +290,8 @@ final class Woosmap extends AbstractHttpProvider implements Provider
             throw InvalidServerResponse::create($url);
         }
 
-        if ('REQUEST_DENIED' === $json->status && 'Incorrect authentication credentials. Please check or use a valid API Key' === $json->error_message) {
+        if ('Incorrect authentication credentials. Please check or use a valid API Key' === ($json->detail ?? null)) {
             throw new InvalidCredentials(sprintf('API key is invalid %s', $url));
-        }
-
-        if ('REQUEST_DENIED' === $json->status) {
-            throw new InvalidServerResponse(
-                sprintf('API access denied. Request: %s - Message: %s', $url, $json->error_message)
-            );
         }
 
         return $json;
