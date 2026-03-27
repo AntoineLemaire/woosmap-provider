@@ -255,6 +255,12 @@ final class Woosmap extends AbstractHttpProvider implements Provider
                 $builder->setValue($type, $values->long_name);
 
                 break;
+            case 'division_level_1':
+            case 'division_level_2':
+            case 'division_level_3':
+                $builder->addAdminLevel(intval(substr($type, -1)), $values->long_name, $values->short_name);
+
+                break;
 
             default:
         }
