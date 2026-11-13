@@ -177,6 +177,17 @@ final class Woosmap extends AbstractHttpProvider implements Provider
                 }
             }
 
+            // Cities split into districts (Paris, Marseille, Lyon) return the district as "locality"
+            // and the city as "municipality": keep the city as locality, the district as sublocality.
+            $municipality = $builder->getValue('municipality');
+            $locality = $builder->getValue('locality');
+            if (null !== $municipality && $municipality !== $locality) {
+                if (null !== $locality) {
+                    $builder->setSubLocality($locality);
+                }
+                $builder->setLocality($municipality);
+            }
+
             /** @var WoosmapAddress $address */
             $address = $builder->build(WoosmapAddress::class);
             $address = $address->withId($builder->getValue('id'));
@@ -225,6 +236,12 @@ final class Woosmap extends AbstractHttpProvider implements Provider
             case 'locality':
             case 'postal_town':
                 $builder->setLocality($values->long_name);
+                $builder->setValue('locality', $values->long_name);
+
+                break;
+
+            case 'municipality':
+                $builder->setValue('municipality', $values->long_name);
 
                 break;
 

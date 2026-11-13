@@ -272,6 +272,73 @@ class WoosmapTest extends BaseTestCase
         $this->assertEquals('Bourges', $result->getLocality());
     }
 
+    /**
+     * @dataProvider municipalityProvider
+     */
+    public function testGeocodeUsesMunicipalityAsLocality(string $json, string $expectedLocality, ?string $expectedSubLocality, string $expectedPostalCode)
+    {
+        $provider = new Woosmap($this->getMockedHttpClient($json), null, 'mock-api-key');
+        $results = $provider->geocodeQuery(GeocodeQuery::create('address'));
+
+        /** @var Location $result */
+        $result = $results->first();
+        $this->assertEquals($expectedLocality, $result->getLocality());
+        $this->assertEquals($expectedSubLocality, $result->getSubLocality());
+        $this->assertEquals($expectedPostalCode, $result->getPostalCode());
+    }
+
+    public function municipalityProvider(): array
+    {
+        return [
+            'Marseille district' => [
+                $this->buildLocalityResponse('15e Arrondissement', 'Marseille', '13015'),
+                'Marseille',
+                '15e Arrondissement',
+                '13015',
+            ],
+            'Paris district' => [
+                $this->buildLocalityResponse('Paris 15e Arrondissement', 'Paris', '75015'),
+                'Paris',
+                'Paris 15e Arrondissement',
+                '75015',
+            ],
+            'City without municipality' => [
+                $this->buildLocalityResponse('Nancy', null, '54000'),
+                'Nancy',
+                null,
+                '54000',
+            ],
+            'City with identical municipality' => [
+                $this->buildLocalityResponse('Nancy', 'Nancy', '54000'),
+                'Nancy',
+                null,
+                '54000',
+            ],
+        ];
+    }
+
+    private function buildLocalityResponse(string $locality, ?string $municipality, string $postalCode): string
+    {
+        $components = [
+            ['types' => ['country', 'administrative_area_level_0', 'division_level_0'], 'long_name' => 'France', 'short_name' => 'FR'],
+        ];
+        if (null !== $municipality) {
+            $components[] = ['types' => ['administrative_area_level_2', 'municipality'], 'long_name' => $municipality, 'short_name' => $municipality];
+        }
+        $components[] = ['types' => ['locality'], 'long_name' => $locality, 'short_name' => $locality];
+        $components[] = ['types' => ['postal_codes'], 'long_name' => [$postalCode], 'short_name' => [$postalCode]];
+
+        return json_encode([
+            'results' => [[
+                'public_id' => 'mock-id',
+                'types' => ['locality'],
+                'formatted_address' => $locality,
+                'address_components' => $components,
+                'geometry' => ['location' => ['lat' => 43.353156, 'lng' => 5.364765], 'location_type' => 'GEOMETRIC_CENTER'],
+            ]],
+        ]);
+    }
+
     private function getWoosmapProvider(): Woosmap
     {
         if (!isset($_SERVER['WOOSMAP_PRIVATE_KEY'])) {
